@@ -74,7 +74,7 @@ func connectionCR() *v1alpha1.CrunchyBridgeConnection {
 			Name:      inventoryRefName,
 			Namespace: testNamespace,
 		},
-		InstanceID: instanceID,
+		DatabaseServiceID: instanceID,
 	}
 	connection := &v1alpha1.CrunchyBridgeConnection{
 		ObjectMeta: metav1.ObjectMeta{

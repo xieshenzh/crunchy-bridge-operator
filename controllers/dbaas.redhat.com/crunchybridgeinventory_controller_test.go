@@ -71,11 +71,11 @@ func updateMockStatus(inventory *v1alpha1.CrunchyBridgeInventory) {
 
 	lastTransitionTime = lastTransitionTime.In(time.Local)
 	status := &dbaasv1alpha1.DBaaSInventoryStatus{
-		Instances: []dbaasv1alpha1.Instance{
+		DatabaseServices: []dbaasv1alpha1.DatabaseService{
 			{
-				InstanceID: "testInstanceID",
-				Name:       "testInstance",
-				InstanceInfo: map[string]string{
+				ServiceID:   "testInstanceID",
+				ServiceName: "testInstance",
+				ServiceInfo: map[string]string{
 					"testInstanceInfo": "testInstanceInfo",
 				},
 			},

@@ -84,7 +84,7 @@ func (r *CrunchyBridgeConnectionReconciler) Reconcile(ctx context.Context, req c
 		return ctrl.Result{}, err
 	}
 
-	instance, err := getInstance(&inventory, connection.Spec.InstanceID)
+	instance, err := getInstance(&inventory, connection.Spec.DatabaseServiceID)
 	if instance == nil {
 		statusErr := r.updateStatus(ctx, connection, metav1.ConditionFalse, NotFound, err.Error())
 		if statusErr != nil {
@@ -105,7 +105,7 @@ func (r *CrunchyBridgeConnectionReconciler) Reconcile(ctx context.Context, req c
 	}
 
 	logger.Info("Crunchy Bridge Client Configured ")
-	err = r.connectionDetails(instance.InstanceID, &connection, bridgeapiClient, req, logger)
+	err = r.connectionDetails(instance.ServiceID, &connection, bridgeapiClient, req, logger)
 	if err != nil {
 		statusErr := r.updateStatus(ctx, connection, metav1.ConditionFalse, BackendError, err.Error())
 		if statusErr != nil {
@@ -131,14 +131,16 @@ func (r *CrunchyBridgeConnectionReconciler) SetupWithManager(mgr ctrl.Manager) e
 }
 
 // getInstance returns an instance from the inventory based on instanceID
-func getInstance(inventory *dbaasredhatcomv1alpha1.CrunchyBridgeInventory, instanceID string) (*dbaasv1alpha1.Instance, error) {
+func getInstance(inventory *dbaasredhatcomv1alpha1.CrunchyBridgeInventory, instanceID string) (*dbaasv1alpha1.DatabaseService, error) {
 	if !isInventoryReady(inventory) {
 		return nil, fmt.Errorf("CrunchyBridgeInventory CR status is not ready ")
 	}
-	for _, instance := range inventory.Status.Instances {
-		if instance.InstanceID == instanceID {
-			//Found the instance based on its ID
-			return &instance, nil
+	for _, databaseService := range inventory.Status.DatabaseServices {
+		if databaseService.ServiceType == dbaasv1alpha1.InstanceDatabaseService {
+			if databaseService.ServiceID == instanceID {
+				//Found the instance based on its ID
+				return &databaseService, nil
+			}
 		}
 	}
 	return nil, fmt.Errorf("instance id %q not found in CrunchyBridgeInventory status", instanceID)

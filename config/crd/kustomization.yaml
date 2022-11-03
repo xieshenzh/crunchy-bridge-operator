@@ -14,8 +14,8 @@ patchesStrategicMerge:
 # patches here are for enabling the conversion webhook for each CRD
 #- patches/webhook_in_bridgeclusters.yaml
 #- patches/webhook_in_databaseroles.yaml
-#- patches/webhook_in_crunchybridgeinventories.yaml
-#- patches/webhook_in_crunchybridgeconnections.yaml
+- patches/webhook_in_crunchybridgeinventories.yaml
+- patches/webhook_in_crunchybridgeconnections.yaml
 #- patches/webhook_in_crunchybridgeinstances.yaml
 #+kubebuilder:scaffold:crdkustomizewebhookpatch
 

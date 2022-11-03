@@ -19,14 +19,15 @@ package dbaasredhatcom
 import (
 	"time"
 
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
+	"github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha2"
+	dbaasv1alpha2 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha2"
 )
 
 const (
@@ -66,17 +67,17 @@ var _ = Describe("CrunchyBridgeConnection controller", func() {
 	})
 })
 
-func connectionCR() *v1alpha1.CrunchyBridgeConnection {
+func connectionCR() *v1alpha2.CrunchyBridgeConnection {
 	connectionName := "test-connection"
 	instanceID := "testInstanceID"
-	DBaaSConnectionSpec := &dbaasv1alpha1.DBaaSConnectionSpec{
-		InventoryRef: dbaasv1alpha1.NamespacedName{
+	DBaaSConnectionSpec := &dbaasv1alpha2.DBaaSConnectionSpec{
+		InventoryRef: dbaasv1alpha2.NamespacedName{
 			Name:      inventoryRefName,
 			Namespace: testNamespace,
 		},
-		InstanceID: instanceID,
+		DatabaseServiceID: instanceID,
 	}
-	connection := &v1alpha1.CrunchyBridgeConnection{
+	connection := &v1alpha2.CrunchyBridgeConnection{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      connectionName,
 			Namespace: testNamespace,

@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -31,7 +30,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	dbaasredhatcomv1alpha1 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
+	dbaasredhatcomv1alpha2 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha2"
+	dbaasv1alpha2 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha2"
 )
 
 // CrunchyBridgeConnectionReconciler reconciles a CrunchyBridgeConnection object
@@ -58,7 +58,7 @@ type CrunchyBridgeConnectionReconciler struct {
 func (r *CrunchyBridgeConnectionReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx, "CrunchyBridgeConnection", req.NamespacedName)
 
-	var connection dbaasredhatcomv1alpha1.CrunchyBridgeConnection
+	var connection dbaasredhatcomv1alpha2.CrunchyBridgeConnection
 	err := r.Get(ctx, req.NamespacedName, &connection)
 	if err != nil {
 		if apierrors.IsNotFound(err) {
@@ -69,7 +69,7 @@ func (r *CrunchyBridgeConnectionReconciler) Reconcile(ctx context.Context, req c
 		logger.Error(err, "Error fetching CrunchyBridgeConnection for reconcile")
 		return ctrl.Result{}, err
 	}
-	inventory := dbaasredhatcomv1alpha1.CrunchyBridgeInventory{}
+	inventory := dbaasredhatcomv1alpha2.CrunchyBridgeInventory{}
 	if err := r.Get(ctx, types.NamespacedName{Namespace: connection.Spec.InventoryRef.Namespace, Name: connection.Spec.InventoryRef.Name}, &inventory); err != nil {
 		if apierrors.IsNotFound(err) {
 			statusErr := r.updateStatus(ctx, connection, metav1.ConditionFalse, InventoryNotFound, err.Error())
@@ -84,7 +84,7 @@ func (r *CrunchyBridgeConnectionReconciler) Reconcile(ctx context.Context, req c
 		return ctrl.Result{}, err
 	}
 
-	instance, err := getInstance(&inventory, connection.Spec.InstanceID)
+	instance, err := getInstance(&inventory, connection.Spec.DatabaseServiceID)
 	if instance == nil {
 		statusErr := r.updateStatus(ctx, connection, metav1.ConditionFalse, NotFound, err.Error())
 		if statusErr != nil {
@@ -105,7 +105,7 @@ func (r *CrunchyBridgeConnectionReconciler) Reconcile(ctx context.Context, req c
 	}
 
 	logger.Info("Crunchy Bridge Client Configured ")
-	err = r.connectionDetails(instance.InstanceID, &connection, bridgeapiClient, req, logger)
+	err = r.connectionDetails(instance.ServiceID, &connection, bridgeapiClient, req, logger)
 	if err != nil {
 		statusErr := r.updateStatus(ctx, connection, metav1.ConditionFalse, BackendError, err.Error())
 		if statusErr != nil {
@@ -126,26 +126,28 @@ func (r *CrunchyBridgeConnectionReconciler) Reconcile(ctx context.Context, req c
 // SetupWithManager sets up the controller with the Manager.
 func (r *CrunchyBridgeConnectionReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&dbaasredhatcomv1alpha1.CrunchyBridgeConnection{}).
+		For(&dbaasredhatcomv1alpha2.CrunchyBridgeConnection{}).
 		Complete(r)
 }
 
 // getInstance returns an instance from the inventory based on instanceID
-func getInstance(inventory *dbaasredhatcomv1alpha1.CrunchyBridgeInventory, instanceID string) (*dbaasv1alpha1.Instance, error) {
+func getInstance(inventory *dbaasredhatcomv1alpha2.CrunchyBridgeInventory, instanceID string) (*dbaasv1alpha2.DatabaseService, error) {
 	if !isInventoryReady(inventory) {
 		return nil, fmt.Errorf("CrunchyBridgeInventory CR status is not ready ")
 	}
-	for _, instance := range inventory.Status.Instances {
-		if instance.InstanceID == instanceID {
-			//Found the instance based on its ID
-			return &instance, nil
+	for _, databaseService := range inventory.Status.DatabaseServices {
+		if databaseService.ServiceType == dbaasv1alpha2.InstanceDatabaseService {
+			if databaseService.ServiceID == instanceID {
+				//Found the instance based on its ID
+				return &databaseService, nil
+			}
 		}
 	}
 	return nil, fmt.Errorf("instance id %q not found in CrunchyBridgeInventory status", instanceID)
 }
 
 // updateStatus
-func (r *CrunchyBridgeConnectionReconciler) updateStatus(ctx context.Context, connection dbaasredhatcomv1alpha1.CrunchyBridgeConnection, conidtionStatus metav1.ConditionStatus, reason, message string) error {
+func (r *CrunchyBridgeConnectionReconciler) updateStatus(ctx context.Context, connection dbaasredhatcomv1alpha2.CrunchyBridgeConnection, conidtionStatus metav1.ConditionStatus, reason, message string) error {
 	setStatusCondition(&connection, ReadyForBinding, conidtionStatus, reason, message)
 	if err := r.Client.Status().Update(context.Background(), &connection); err != nil {
 		return err
@@ -154,7 +156,7 @@ func (r *CrunchyBridgeConnectionReconciler) updateStatus(ctx context.Context, co
 }
 
 // isInventoryReady is the CrunchyBridgeInventory ready?
-func isInventoryReady(inventory *dbaasredhatcomv1alpha1.CrunchyBridgeInventory) bool {
+func isInventoryReady(inventory *dbaasredhatcomv1alpha2.CrunchyBridgeInventory) bool {
 	cond := GetInventoryCondition(inventory, string(SpecSynced))
 	return cond != nil && cond.Status == metav1.ConditionTrue
 }

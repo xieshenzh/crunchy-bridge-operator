@@ -1,0 +1,17 @@
+apiVersion: dbaas.redhat.com/v1alpha2
+kind: CrunchyBridgeConnection
+metadata:
+  labels:
+    app.kubernetes.io/name: crunchybridgeconnection
+    app.kubernetes.io/instance: crunchybridgeconnection-sample
+    app.kubernetes.io/part-of: crunchy-bridge-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: crunchy-bridge-operator
+  name: crunchybridgeconnection-sample
+spec:
+  databaseServiceID: na7wuu36f5f67oaxm75ngjl5pe
+  inventoryRef:
+    name: crunchy-inventory
+    namespace: openshift-operators
+
+

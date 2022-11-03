@@ -44,7 +44,7 @@ BUNDLE_IMG ?= $(IMAGE_TAG_BASE)-bundle:v$(VERSION)
 # Image URL to use all building/pushing image targets
 IMG ?= $(IMAGE_TAG_BASE):v$(VERSION)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
-CRD_OPTIONS ?= "crd:trivialVersions=true,preserveUnknownFields=false"
+CRD_OPTIONS ?= "crd"
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -169,6 +169,7 @@ bundle: manifests kustomize ## Generate bundle manifests and metadata, then vali
 	operator-sdk generate kustomize manifests -q
 	cd config/manager && $(KUSTOMIZE) edit set image controller=$(IMG)
 	$(KUSTOMIZE) build config/manifests | operator-sdk generate bundle -q --overwrite --manifests --version $(VERSION) $(BUNDLE_METADATA_OPTS)
+	hack/openshift-conversion-webhook.sh
 	operator-sdk bundle validate ./bundle
 
 .PHONY: bundle-build

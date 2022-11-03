@@ -1,5 +1,5 @@
 /*
-Copyright 2021 Crunchy Data Solutions, Inc.
+Copyright 2022 Crunchy Data Solutions, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,26 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1alpha1
+package v1alpha2
 
 import (
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasv1alpha2 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:storageversion
 
 // CrunchyBridgeInventory is the Schema for the crunchybridgeinventories API
 type CrunchyBridgeInventory struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   dbaasv1alpha1.DBaaSInventorySpec   `json:"spec,omitempty"`
-	Status dbaasv1alpha1.DBaaSInventoryStatus `json:"status,omitempty"`
+	Spec   dbaasv1alpha2.DBaaSInventorySpec   `json:"spec,omitempty"`
+	Status dbaasv1alpha2.DBaaSInventoryStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true

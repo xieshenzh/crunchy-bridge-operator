@@ -32,6 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	dbaasredhatcomv1alpha1 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
+	dbaasredhatcomv1alpha2 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha2"
 	"github.com/CrunchyData/crunchy-bridge-operator/internal/bridgeapi"
 	"github.com/CrunchyData/crunchy-bridge-operator/internal/kubeadapter"
 )
@@ -61,7 +62,7 @@ type CrunchyBridgeInventoryReconciler struct {
 func (r *CrunchyBridgeInventoryReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx, "CrunchyBridgeInventory", req.NamespacedName)
 
-	var inventory dbaasredhatcomv1alpha1.CrunchyBridgeInventory
+	var inventory dbaasredhatcomv1alpha2.CrunchyBridgeInventory
 	err := r.Get(ctx, req.NamespacedName, &inventory)
 	if err != nil {
 		if apierrors.IsNotFound(err) {
@@ -103,7 +104,7 @@ func (r *CrunchyBridgeInventoryReconciler) Reconcile(ctx context.Context, req ct
 }
 
 // setupClient
-func setupClient(client client.Client, inventory dbaasredhatcomv1alpha1.CrunchyBridgeInventory, APIBaseURL string, logger logr.Logger) (*bridgeapi.Client, error) {
+func setupClient(client client.Client, inventory dbaasredhatcomv1alpha2.CrunchyBridgeInventory, APIBaseURL string, logger logr.Logger) (*bridgeapi.Client, error) {
 	baseUrl, err := url.Parse(APIBaseURL)
 	if err != nil {
 		logger.Error(err, "Malformed URL", "URL", APIBaseURL)
@@ -125,7 +126,7 @@ func setupClient(client client.Client, inventory dbaasredhatcomv1alpha1.CrunchyB
 }
 
 // updateStatus
-func (r *CrunchyBridgeInventoryReconciler) updateStatus(ctx context.Context, inventory dbaasredhatcomv1alpha1.CrunchyBridgeInventory, conidtionStatus metav1.ConditionStatus, reason, message string) error {
+func (r *CrunchyBridgeInventoryReconciler) updateStatus(ctx context.Context, inventory dbaasredhatcomv1alpha2.CrunchyBridgeInventory, conidtionStatus metav1.ConditionStatus, reason, message string) error {
 	setStatusCondition(&inventory, SpecSynced, conidtionStatus, reason, message)
 	if err := r.Status().Update(ctx, &inventory); err != nil {
 		return err
@@ -152,7 +153,7 @@ func (r *CrunchyBridgeInventoryReconciler) SetupWithManager(mgr ctrl.Manager) er
 	})
 
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&dbaasredhatcomv1alpha1.CrunchyBridgeInventory{}).
+		For(&dbaasredhatcomv1alpha2.CrunchyBridgeInventory{}).
 		Watches(&source.Kind{Type: &dbaasredhatcomv1alpha1.CrunchyBridgeInstance{}}, handler.EnqueueRequestsFromMapFunc(mapFn)).
 		Complete(r)
 }

@@ -38,7 +38,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	dbaasredhatcomv1alpha1 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
+	dbaasredhatcomv1alpha2 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha2"
 	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasv1alpha2 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha2"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -88,16 +90,16 @@ var _ = BeforeSuite(func() {
 	err = dbaasredhatcomv1alpha1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
-	err = dbaasredhatcomv1alpha1.AddToScheme(scheme.Scheme)
+	err = dbaasredhatcomv1alpha2.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
 	err = dbaasv1alpha1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
-	err = apiextv1.AddToScheme(scheme.Scheme)
+	err = dbaasv1alpha2.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
-	err = dbaasredhatcomv1alpha1.AddToScheme(scheme.Scheme)
+	err = apiextv1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
 	//+kubebuilder:scaffold:scheme

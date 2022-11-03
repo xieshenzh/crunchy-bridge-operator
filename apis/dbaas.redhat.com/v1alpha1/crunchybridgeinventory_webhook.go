@@ -13,3 +13,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
+package v1alpha1
+
+import (
+	ctrl "sigs.k8s.io/controller-runtime"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
+)
+
+// log is for logging in this package.
+var crunchybridgeinventorylog = logf.Log.WithName("crunchybridgeinventory-resource")
+
+func (r *CrunchyBridgeInventory) SetupWebhookWithManager(mgr ctrl.Manager) error {
+	return ctrl.NewWebhookManagedBy(mgr).
+		For(r).
+		Complete()
+}

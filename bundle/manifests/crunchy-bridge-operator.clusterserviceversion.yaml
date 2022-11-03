@@ -80,6 +80,47 @@ metadata:
               "namespace": "openshift-dbaas-operator"
             }
           }
+        },
+        {
+          "apiVersion": "dbaas.redhat.com/v1alpha2",
+          "kind": "CrunchyBridgeConnection",
+          "metadata": {
+            "labels": {
+              "app.kubernetes.io/created-by": "crunchy-bridge-operator",
+              "app.kubernetes.io/instance": "crunchybridgeconnection-sample",
+              "app.kubernetes.io/managed-by": "kustomize",
+              "app.kubernetes.io/name": "crunchybridgeconnection",
+              "app.kubernetes.io/part-of": "crunchy-bridge-operator"
+            },
+            "name": "crunchybridgeconnection-sample"
+          },
+          "spec": {
+            "databaseServiceID": "na7wuu36f5f67oaxm75ngjl5pe",
+            "inventoryRef": {
+              "name": "crunchy-inventory",
+              "namespace": "openshift-operators"
+            }
+          }
+        },
+        {
+          "apiVersion": "dbaas.redhat.com/v1alpha2",
+          "kind": "CrunchyBridgeInventory",
+          "metadata": {
+            "labels": {
+              "app.kubernetes.io/created-by": "crunchy-bridge-operator",
+              "app.kubernetes.io/instance": "crunchybridgeinventory-sample",
+              "app.kubernetes.io/managed-by": "kustomize",
+              "app.kubernetes.io/name": "crunchybridgeinventory",
+              "app.kubernetes.io/part-of": "crunchy-bridge-operator"
+            },
+            "name": "crunchybridgeinventory-sample"
+          },
+          "spec": {
+            "credentialsRef": {
+              "name": "crunchy-bridge-api-key",
+              "namespace": "openshift-dbaas-operator"
+            }
+          }
         }
       ]
     capabilities: Basic Install
@@ -100,12 +141,24 @@ spec:
     - kind: CrunchyBridgeConnection
       name: crunchybridgeconnections.dbaas.redhat.com
       version: v1alpha1
+    - description: CrunchyBridgeConnection is the Schema for the crunchybridgeconnections
+        API
+      displayName: Crunchy Bridge Connection
+      kind: CrunchyBridgeConnection
+      name: crunchybridgeconnections.dbaas.redhat.com
+      version: v1alpha2
     - kind: CrunchyBridgeInstance
       name: crunchybridgeinstances.dbaas.redhat.com
       version: v1alpha1
     - kind: CrunchyBridgeInventory
       name: crunchybridgeinventories.dbaas.redhat.com
       version: v1alpha1
+    - description: CrunchyBridgeInventory is the Schema for the crunchybridgeinventories
+        API
+      displayName: Crunchy Bridge Inventory
+      kind: CrunchyBridgeInventory
+      name: crunchybridgeinventories.dbaas.redhat.com
+      version: v1alpha2
     - description: DatabaseRole is the Schema for the databaseroles API
       displayName: Database Role
       kind: DatabaseRole
@@ -304,7 +357,9 @@ spec:
           - create
         serviceAccountName: crunchy-bridge-operator-controller-manager
       deployments:
-      - name: crunchy-bridge-operator-controller-manager
+      - label:
+          control-plane: controller-manager
+        name: crunchy-bridge-operator-controller-manager
         spec:
           replicas: 1
           selector:
@@ -350,6 +405,10 @@ spec:
                   initialDelaySeconds: 15
                   periodSeconds: 20
                 name: manager
+                ports:
+                - containerPort: 9443
+                  name: webhook-server
+                  protocol: TCP
                 readinessProbe:
                   httpGet:
                     path: /readyz
@@ -431,3 +490,16 @@ spec:
     name: Crunchy Data
     url: https://www.crunchydata.com
   version: 0.0.6-dev
+  webhookdefinitions:
+  - admissionReviewVersions:
+    - v1
+    containerPort: 443
+    conversionCRDs:
+    - crunchybridgeconnections.dbaas.redhat.com
+    - crunchybridgeinventories.dbaas.redhat.com
+    deploymentName: crunchy-bridge-operator-controller-manager
+    generateName: ccrunchybridgeconnectionscrunchybridgeinventories.kb.io
+    sideEffects: None
+    targetPort: 9443
+    type: ConversionWebhook
+    webhookPath: /convert

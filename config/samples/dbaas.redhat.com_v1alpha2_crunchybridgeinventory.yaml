@@ -1,0 +1,14 @@
+apiVersion: dbaas.redhat.com/v1alpha2
+kind: CrunchyBridgeInventory
+metadata:
+  labels:
+    app.kubernetes.io/name: crunchybridgeinventory
+    app.kubernetes.io/instance: crunchybridgeinventory-sample
+    app.kubernetes.io/part-of: crunchy-bridge-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: crunchy-bridge-operator
+  name: crunchybridgeinventory-sample
+spec:
+  credentialsRef:
+    name: crunchy-bridge-api-key
+    namespace: openshift-dbaas-operator

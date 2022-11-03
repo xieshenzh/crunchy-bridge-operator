@@ -20,6 +20,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	dbaasredhatcomv1alpha1 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
+	dbaasredhatcomv1alpha2 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha2"
 )
 
 const (
@@ -60,7 +61,7 @@ func setStatusCondition(obj ObjectWithStatusConditions, condition string, status
 
 // GetCondition return the condition with the passed condition type from
 // the status object. If the condition is not already present, return nil
-func GetConnectonCondition(inv *dbaasredhatcomv1alpha1.CrunchyBridgeConnection, condType string) *metav1.Condition {
+func GetConnectonCondition(inv *dbaasredhatcomv1alpha2.CrunchyBridgeConnection, condType string) *metav1.Condition {
 	for i := range inv.Status.Conditions {
 		if inv.Status.Conditions[i].Type == condType {
 			return &inv.Status.Conditions[i]
@@ -71,7 +72,7 @@ func GetConnectonCondition(inv *dbaasredhatcomv1alpha1.CrunchyBridgeConnection, 
 
 // GetCondition return the condition with the passed condition type from
 // the status object. If the condition is not already present, return nil
-func GetInventoryCondition(inv *dbaasredhatcomv1alpha1.CrunchyBridgeInventory, condType string) *metav1.Condition {
+func GetInventoryCondition(inv *dbaasredhatcomv1alpha2.CrunchyBridgeInventory, condType string) *metav1.Condition {
 	for i := range inv.Status.Conditions {
 		if inv.Status.Conditions[i].Type == condType {
 			return &inv.Status.Conditions[i]

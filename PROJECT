@@ -35,6 +35,9 @@ resources:
   kind: CrunchyBridgeInventory
   path: github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1
   version: v1alpha1
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -44,6 +47,9 @@ resources:
   kind: CrunchyBridgeConnection
   path: github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1
   version: v1alpha1
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 - api:
     crdVersion: v1
     namespaced: true
@@ -53,4 +59,26 @@ resources:
   kind: CrunchyBridgeInstance
   path: github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1
   version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: crunchydata.com
+  group: dbaas.redhat.com
+  kind: CrunchyBridgeConnection
+  path: github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha2
+  version: v1alpha2
+  webhooks:
+    conversion: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: crunchydata.com
+  group: dbaas.redhat.com
+  kind: CrunchyBridgeInventory
+  path: github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha2
+  version: v1alpha2
+  webhooks:
+    conversion: true
+    webhookVersion: v1
 version: "3"

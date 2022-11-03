@@ -34,6 +34,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	dbaasredhatcomv1alpha1 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
+	dbaasredhatcomv1alpha2 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha2"
 	"github.com/CrunchyData/crunchy-bridge-operator/internal/bridgeapi"
 )
 
@@ -75,7 +76,7 @@ func (r *CrunchyBridgeInstanceReconciler) Reconcile(ctx context.Context, req ctr
 		logger.Error(err, "Error fetching CrunchyBridgeInstance object for reconciliation")
 		return ctrl.Result{}, err
 	}
-	inventory := dbaasredhatcomv1alpha1.CrunchyBridgeInventory{}
+	inventory := dbaasredhatcomv1alpha2.CrunchyBridgeInventory{}
 	if err := r.Get(ctx, types.NamespacedName{Namespace: instanceObj.Spec.InventoryRef.Namespace, Name: instanceObj.Spec.InventoryRef.Name}, &inventory); err != nil {
 		if apierrors.IsNotFound(err) {
 			statusErr := r.updateStatus(instanceObj, metav1.ConditionFalse, InventoryNotFound, err.Error())

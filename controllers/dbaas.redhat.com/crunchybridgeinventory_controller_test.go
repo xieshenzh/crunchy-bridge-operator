@@ -19,15 +19,17 @@ package dbaasredhatcom
 import (
 	"time"
 
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
+	"github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha2"
+	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasv1alpha2 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha2"
 )
 
 const (
@@ -64,18 +66,18 @@ var _ = Describe("CrunchyBridgeInventory controller", func() {
 
 })
 
-func updateMockStatus(inventory *v1alpha1.CrunchyBridgeInventory) {
+func updateMockStatus(inventory *v1alpha2.CrunchyBridgeInventory) {
 	By("setting up status")
 	lastTransitionTime, err := time.Parse(time.RFC3339, "2021-06-30T22:17:55-04:00")
 	Expect(err).NotTo(HaveOccurred())
 
 	lastTransitionTime = lastTransitionTime.In(time.Local)
-	status := &dbaasv1alpha1.DBaaSInventoryStatus{
-		Instances: []dbaasv1alpha1.Instance{
+	status := &dbaasv1alpha2.DBaaSInventoryStatus{
+		DatabaseServices: []dbaasv1alpha2.DatabaseService{
 			{
-				InstanceID: "testInstanceID",
-				Name:       "testInstance",
-				InstanceInfo: map[string]string{
+				ServiceID:   "testInstanceID",
+				ServiceName: "testInstance",
+				ServiceInfo: map[string]string{
 					"testInstanceInfo": "testInstanceInfo",
 				},
 			},
@@ -94,15 +96,15 @@ func updateMockStatus(inventory *v1alpha1.CrunchyBridgeInventory) {
 
 }
 
-func createInventories(inventoryName string) *v1alpha1.CrunchyBridgeInventory {
+func createInventories(inventoryName string) *v1alpha2.CrunchyBridgeInventory {
 	credentialSecret := createSecret(testNamespace)
 
-	DBaaSInventorySpec := &dbaasv1alpha1.DBaaSInventorySpec{
-		CredentialsRef: &dbaasv1alpha1.LocalObjectReference{
+	DBaaSInventorySpec := &dbaasv1alpha2.DBaaSInventorySpec{
+		CredentialsRef: &dbaasv1alpha2.LocalObjectReference{
 			Name: credentialSecret.Name,
 		},
 	}
-	inventory := &v1alpha1.CrunchyBridgeInventory{
+	inventory := &v1alpha2.CrunchyBridgeInventory{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      inventoryName,
 			Namespace: testNamespace,

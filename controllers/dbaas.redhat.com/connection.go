@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package dbaasredhatcom
 
 import (
@@ -28,7 +29,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	dbaasredhatcomv1alpha1 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
+	dbaasredhatcomv1alpha2 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha2"
 	"github.com/CrunchyData/crunchy-bridge-operator/internal/bridgeapi"
 	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
 )
@@ -44,7 +45,7 @@ const (
 )
 
 // connectionDetails
-func (r *CrunchyBridgeConnectionReconciler) connectionDetails(instanceID string, connection *dbaasredhatcomv1alpha1.CrunchyBridgeConnection, bridgeapi *bridgeapi.Client, req ctrl.Request, logger logr.Logger) error {
+func (r *CrunchyBridgeConnectionReconciler) connectionDetails(instanceID string, connection *dbaasredhatcomv1alpha2.CrunchyBridgeConnection, bridgeapi *bridgeapi.Client, req ctrl.Request, logger logr.Logger) error {
 
 	if r.isBindingExist(connection) {
 		return nil
@@ -81,7 +82,7 @@ func (r *CrunchyBridgeConnectionReconciler) connectionDetails(instanceID string,
 }
 
 // getOwnedSecret returns a secret object for database credentials with ownership set
-func getOwnedSecret(connection *dbaasredhatcomv1alpha1.CrunchyBridgeConnection, username, password string) *corev1.Secret {
+func getOwnedSecret(connection *dbaasredhatcomv1alpha2.CrunchyBridgeConnection, username, password string) *corev1.Secret {
 	return &corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			Kind: "Opaque",
@@ -115,7 +116,7 @@ func getOwnedSecret(connection *dbaasredhatcomv1alpha1.CrunchyBridgeConnection, 
 }
 
 // getOwnedConfigMap returns a configmap object for database name, host , port with ownership set
-func getOwnedConfigMap(connection *dbaasredhatcomv1alpha1.CrunchyBridgeConnection, connectionString string) *corev1.ConfigMap {
+func getOwnedConfigMap(connection *dbaasredhatcomv1alpha2.CrunchyBridgeConnection, connectionString string) *corev1.ConfigMap {
 
 	return &corev1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
@@ -164,7 +165,7 @@ func connectionCMData(connectionString string) map[string]string {
 }
 
 // isBindingExist checking if binding already exits
-func (r *CrunchyBridgeConnectionReconciler) isBindingExist(connection *dbaasredhatcomv1alpha1.CrunchyBridgeConnection) bool {
+func (r *CrunchyBridgeConnectionReconciler) isBindingExist(connection *dbaasredhatcomv1alpha2.CrunchyBridgeConnection) bool {
 
 	cond := GetConnectonCondition(connection, string(ReadyForBinding))
 	if cond != nil && cond.Status == metav1.ConditionTrue {

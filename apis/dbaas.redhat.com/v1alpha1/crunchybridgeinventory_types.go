@@ -17,7 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasv1beta1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -32,8 +32,8 @@ type CrunchyBridgeInventory struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   dbaasv1alpha1.DBaaSInventorySpec   `json:"spec,omitempty"`
-	Status dbaasv1alpha1.DBaaSInventoryStatus `json:"status,omitempty"`
+	Spec   dbaasv1beta1.DBaaSInventorySpec   `json:"spec,omitempty"`
+	Status dbaasv1beta1.DBaaSInventoryStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true

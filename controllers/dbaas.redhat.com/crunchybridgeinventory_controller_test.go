@@ -20,6 +20,7 @@ import (
 	"time"
 
 	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasv1beta1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
@@ -70,8 +71,8 @@ func updateMockStatus(inventory *v1alpha1.CrunchyBridgeInventory) {
 	Expect(err).NotTo(HaveOccurred())
 
 	lastTransitionTime = lastTransitionTime.In(time.Local)
-	status := &dbaasv1alpha1.DBaaSInventoryStatus{
-		DatabaseServices: []dbaasv1alpha1.DatabaseService{
+	status := &dbaasv1beta1.DBaaSInventoryStatus{
+		DatabaseServices: []dbaasv1beta1.DatabaseService{
 			{
 				ServiceID:   "testInstanceID",
 				ServiceName: "testInstance",
@@ -97,8 +98,8 @@ func updateMockStatus(inventory *v1alpha1.CrunchyBridgeInventory) {
 func createInventories(inventoryName string) *v1alpha1.CrunchyBridgeInventory {
 	credentialSecret := createSecret(testNamespace)
 
-	DBaaSInventorySpec := &dbaasv1alpha1.DBaaSInventorySpec{
-		CredentialsRef: &dbaasv1alpha1.LocalObjectReference{
+	DBaaSInventorySpec := &dbaasv1beta1.DBaaSInventorySpec{
+		CredentialsRef: &dbaasv1beta1.LocalObjectReference{
 			Name: credentialSecret.Name,
 		},
 	}

@@ -18,4 +18,4 @@ require (
 
 )
 
-replace github.com/RHEcosystemAppEng/dbaas-operator => github.com/xieshenzh/dbaas-operator v1.0.1-0.20221121204210-9334898ddc99
+replace github.com/RHEcosystemAppEng/dbaas-operator => github.com/xieshenzh/dbaas-operator v1.0.1-0.20221205213753-d3f05ce9f03b

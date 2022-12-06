@@ -20,7 +20,7 @@ import (
 	"context"
 	"fmt"
 
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasv1beta1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -131,16 +131,14 @@ func (r *CrunchyBridgeConnectionReconciler) SetupWithManager(mgr ctrl.Manager) e
 }
 
 // getInstance returns an instance from the inventory based on instanceID
-func getInstance(inventory *dbaasredhatcomv1alpha1.CrunchyBridgeInventory, instanceID string) (*dbaasv1alpha1.DatabaseService, error) {
+func getInstance(inventory *dbaasredhatcomv1alpha1.CrunchyBridgeInventory, instanceID string) (*dbaasv1beta1.DatabaseService, error) {
 	if !isInventoryReady(inventory) {
 		return nil, fmt.Errorf("CrunchyBridgeInventory CR status is not ready ")
 	}
 	for _, databaseService := range inventory.Status.DatabaseServices {
-		if databaseService.ServiceType == dbaasv1alpha1.InstanceDatabaseService {
-			if databaseService.ServiceID == instanceID {
-				//Found the instance based on its ID
-				return &databaseService, nil
-			}
+		if databaseService.ServiceID == instanceID {
+			//Found the instance based on its ID
+			return &databaseService, nil
 		}
 	}
 	return nil, fmt.Errorf("instance id %q not found in CrunchyBridgeInventory status", instanceID)

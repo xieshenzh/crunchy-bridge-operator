@@ -3,7 +3,7 @@ package dbaasredhatcom
 import (
 	"strconv"
 
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasv1beta1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 	"github.com/go-logr/logr"
 
 	dbaasredhatcomv1alpha1 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
@@ -27,8 +27,7 @@ const (
 
 // discoverInventories query crunchy bridge and return list of inverntories by team
 func (r *CrunchyBridgeInventoryReconciler) discoverInventories(inventory *dbaasredhatcomv1alpha1.CrunchyBridgeInventory, bridgeapi *bridgeapi.Client, logger logr.Logger) error {
-	var bridgeInstances []dbaasv1alpha1.DatabaseService
-	var instances []dbaasv1alpha1.Instance
+	var bridgeInstances []dbaasv1beta1.DatabaseService
 	clusterList, clusterListErr := bridgeapi.ListAllClusters()
 	if clusterListErr != nil {
 		logger.Error(clusterListErr, "Error Listing the instance")
@@ -41,10 +40,9 @@ func (r *CrunchyBridgeInventoryReconciler) discoverInventories(inventory *dbaasr
 		return nil
 	}
 	for _, cluster := range clusterList.Clusters {
-		clusterSvc := dbaasv1alpha1.DatabaseService{
+		clusterSvc := dbaasv1beta1.DatabaseService{
 			ServiceID:   cluster.ID,
 			ServiceName: cluster.Name,
-			ServiceType: dbaasv1alpha1.InstanceDatabaseService,
 			ServiceInfo: map[string]string{
 				TEAM_ID:       cluster.TeamID,
 				PROVIDER_ID:   cluster.ProviderID,
@@ -59,17 +57,10 @@ func (r *CrunchyBridgeInventoryReconciler) discoverInventories(inventory *dbaasr
 				STATE:         cluster.State,
 			},
 		}
-		instance := dbaasv1alpha1.Instance{
-			InstanceID:   clusterSvc.ServiceID,
-			Name:         clusterSvc.ServiceName,
-			InstanceInfo: clusterSvc.ServiceInfo,
-		}
 		bridgeInstances = append(bridgeInstances, clusterSvc)
-		instances = append(instances, instance)
 	}
 
 	inventory.Status.DatabaseServices = bridgeInstances
-	inventory.Status.Instances = instances
 
 	return nil
 }

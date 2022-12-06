@@ -19,7 +19,7 @@ package dbaasredhatcom
 import (
 	"time"
 
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasv1beta1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -69,8 +69,8 @@ var _ = Describe("CrunchyBridgeConnection controller", func() {
 func connectionCR() *v1alpha1.CrunchyBridgeConnection {
 	connectionName := "test-connection"
 	instanceID := "testInstanceID"
-	DBaaSConnectionSpec := &dbaasv1alpha1.DBaaSConnectionSpec{
-		InventoryRef: dbaasv1alpha1.NamespacedName{
+	DBaaSConnectionSpec := &dbaasv1beta1.DBaaSConnectionSpec{
+		InventoryRef: dbaasv1beta1.NamespacedName{
 			Name:      inventoryRefName,
 			Namespace: testNamespace,
 		},

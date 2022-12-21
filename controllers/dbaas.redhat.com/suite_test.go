@@ -24,6 +24,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
 	corev1 "k8s.io/api/core/v1"
 	apiextv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	label "k8s.io/apimachinery/pkg/labels"
@@ -38,7 +39,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	dbaasredhatcomv1alpha1 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasv1beta1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -91,7 +92,7 @@ var _ = BeforeSuite(func() {
 	err = dbaasredhatcomv1alpha1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
-	err = dbaasv1alpha1.AddToScheme(scheme.Scheme)
+	err = dbaasv1beta1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
 	err = apiextv1.AddToScheme(scheme.Scheme)
@@ -114,7 +115,7 @@ var _ = BeforeSuite(func() {
 			SelectorsByObject: cache.SelectorsByObject{
 				&corev1.Secret{}: {
 					Label: label.SelectorFromSet(label.Set{
-						dbaasv1alpha1.TypeLabelKey: dbaasv1alpha1.TypeLabelValue,
+						dbaasv1beta1.TypeLabelKey: dbaasv1beta1.TypeLabelValue,
 					}),
 				},
 			},

@@ -22,7 +22,7 @@ import (
 	"os"
 	"time"
 
-	dbaasoperator "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasoperator "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 	"github.com/go-logr/logr"
 	v1 "k8s.io/api/apps/v1"
 	rbac "k8s.io/api/rbac/v1"
@@ -181,7 +181,7 @@ func bridgeProviderCR(clusterRoleList *rbac.ClusterRoleList) *dbaasoperator.DBaa
 		},
 
 		Spec: dbaasoperator.DBaaSProviderSpec{
-			Provider: dbaasoperator.DatabaseProvider{
+			Provider: dbaasoperator.DatabaseProviderInfo{
 				Name:               PROVIDER,
 				DisplayName:        DISPLAYNAME,
 				DisplayDescription: DISPLAYDESCRIPTION,

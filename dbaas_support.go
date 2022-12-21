@@ -6,7 +6,7 @@ package main
 import (
 	"os"
 
-	dbaasoperator "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasoperator "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"

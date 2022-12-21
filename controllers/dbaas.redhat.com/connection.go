@@ -30,7 +30,7 @@ import (
 
 	dbaasredhatcomv1alpha1 "github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
 	"github.com/CrunchyData/crunchy-bridge-operator/internal/bridgeapi"
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasv1beta1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 )
 
 const (
@@ -90,11 +90,11 @@ func getOwnedSecret(connection *dbaasredhatcomv1alpha1.CrunchyBridgeConnection, 
 			GenerateName: "crunchy-bridge-db-credentials-",
 			Namespace:    connection.Namespace,
 			Labels: map[string]string{
-				"managed-by":               "crunchy-bridge-operator",
-				"owner":                    connection.Name,
-				"owner.kind":               connection.Kind,
-				"owner.namespace":          connection.Namespace,
-				dbaasv1alpha1.TypeLabelKey: dbaasv1alpha1.TypeLabelValue,
+				"managed-by":              "crunchy-bridge-operator",
+				"owner":                   connection.Name,
+				"owner.kind":              connection.Kind,
+				"owner.namespace":         connection.Namespace,
+				dbaasv1beta1.TypeLabelKey: dbaasv1beta1.TypeLabelValue,
 			},
 			OwnerReferences: []metav1.OwnerReference{
 				{

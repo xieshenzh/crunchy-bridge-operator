@@ -19,16 +19,16 @@ package dbaasredhatcom
 import (
 	"time"
 
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
-	dbaasv1beta1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
+	dbaasv1beta1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 )
 
 const (
@@ -124,7 +124,7 @@ func createSecret(namespace string) *corev1.Secret {
 			GenerateName: credentialsRefName + "-",
 			Namespace:    namespace,
 			Labels: map[string]string{
-				dbaasv1alpha1.TypeLabelKey: dbaasv1alpha1.TypeLabelValue,
+				dbaasv1beta1.TypeLabelKey: dbaasv1beta1.TypeLabelValue,
 			},
 		},
 		Data: map[string][]byte{

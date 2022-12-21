@@ -23,7 +23,7 @@ import (
 	"strconv"
 	"time"
 
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
+	dbaasv1beta1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -106,7 +106,7 @@ func (r *CrunchyBridgeInstanceReconciler) Reconcile(ctx context.Context, req ctr
 		if listContains(instanceObj.Finalizers, instanceFinalizer) {
 			if id := instanceObj.Status.InstanceID; id != "" {
 				logger.Info("deleting cluster", "id", id)
-				instanceObj.Status.Phase = dbaasv1alpha1.InstancePhaseDeleting
+				instanceObj.Status.Phase = dbaasv1beta1.InstancePhaseDeleting
 				if err := r.Status().Update(ctx, instanceObj); err != nil {
 					if apierrors.IsConflict(err) {
 						logger.Info("Instance modified, retry reconciling")
@@ -132,7 +132,7 @@ func (r *CrunchyBridgeInstanceReconciler) Reconcile(ctx context.Context, req ctr
 
 	} else {
 		switch instanceObj.Status.Phase {
-		case PhaseBlank, dbaasv1alpha1.InstancePhaseUnknown:
+		case PhaseBlank, dbaasv1beta1.InstancePhaseUnknown:
 			// New object, add our finalizer
 			if !listContains(instanceObj.Finalizers, instanceFinalizer) {
 				controllerutil.AddFinalizer(instanceObj, instanceFinalizer)
@@ -144,12 +144,12 @@ func (r *CrunchyBridgeInstanceReconciler) Reconcile(ctx context.Context, req ctr
 
 			// Set pending phase after so any errors in setting finalizer
 			// don't advance state
-			instanceObj.Status.Phase = dbaasv1alpha1.InstancePhasePending
+			instanceObj.Status.Phase = dbaasv1beta1.InstancePhasePending
 			if err := r.Status().Update(ctx, instanceObj); err != nil {
 				return ctrl.Result{}, err
 			}
 
-		case dbaasv1alpha1.InstancePhasePending:
+		case dbaasv1beta1.InstancePhasePending:
 			req, err := r.createFromSpec(instanceObj.Spec, bridgeapiClient)
 			if err != nil {
 				return ctrl.Result{}, err
@@ -167,12 +167,12 @@ func (r *CrunchyBridgeInstanceReconciler) Reconcile(ctx context.Context, req ctr
 			}
 
 			// Assuming the request was sent, update phase
-			instanceObj.Status.Phase = dbaasv1alpha1.InstancePhaseCreating
+			instanceObj.Status.Phase = dbaasv1beta1.InstancePhaseCreating
 			if err := r.Status().Update(ctx, instanceObj); err != nil {
 				return ctrl.Result{}, err
 			}
 
-		case dbaasv1alpha1.InstancePhaseCreating:
+		case dbaasv1beta1.InstancePhaseCreating:
 			var detC bridgeapi.ClusterDetail
 			if cid := instanceObj.Status.InstanceID; cid == "" {
 				c, err := bridgeapiClient.ClusterByName(instanceObj.Spec.Name)
@@ -199,7 +199,7 @@ func (r *CrunchyBridgeInstanceReconciler) Reconcile(ctx context.Context, req ctr
 			}
 
 			if readyNow := (detC.State == string(bridgeapi.StateReady)); readyNow {
-				instanceObj.Status.Phase = dbaasv1alpha1.InstancePhaseReady
+				instanceObj.Status.Phase = dbaasv1beta1.InstancePhaseReady
 				statusErr := r.updateStatus(instanceObj, metav1.ConditionTrue, Ready, InstanceSuccessMessage)
 				if statusErr != nil {
 					logger.Error(statusErr, "Error in updating CrunchyBridgeInstance status")
@@ -213,7 +213,7 @@ func (r *CrunchyBridgeInstanceReconciler) Reconcile(ctx context.Context, req ctr
 			}
 			return ctrl.Result{Requeue: true, RequeueAfter: WatchInt}, nil
 
-		case dbaasv1alpha1.InstancePhaseReady:
+		case dbaasv1beta1.InstancePhaseReady:
 			// TODO: Monitor changes, change state machine (phoenix)
 
 		default:
@@ -241,7 +241,7 @@ func listContains(list []string, s string) bool {
 	return false
 }
 
-func (r *CrunchyBridgeInstanceReconciler) createFromSpec(spec dbaasv1alpha1.DBaaSInstanceSpec, bridgeapiClient *bridgeapi.Client) (bridgeapi.CreateRequest, error) {
+func (r *CrunchyBridgeInstanceReconciler) createFromSpec(spec dbaasv1beta1.DBaaSInstanceSpec, bridgeapiClient *bridgeapi.Client) (bridgeapi.CreateRequest, error) {
 	req := bridgeapi.CreateRequest{
 		Name:           spec.Name,
 		PGMajorVersion: 13,
@@ -310,7 +310,7 @@ func convertBool(input string) bool {
 // written back to the server, so in-place changes will be lost
 func (r *CrunchyBridgeInstanceReconciler) updateStatusFromDetail(
 	det bridgeapi.ClusterDetail,
-	statusObj *dbaasv1alpha1.DBaaSInstanceStatus) error {
+	statusObj *dbaasv1beta1.DBaaSInstanceStatus) error {
 
 	// Using ID field as a heuristic that a valid ClusterDetail was provided
 	// and blindly updating the detail from there instead of per-field checks

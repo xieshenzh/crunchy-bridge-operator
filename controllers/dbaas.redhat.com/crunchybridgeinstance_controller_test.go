@@ -3,14 +3,15 @@ package dbaasredhatcom
 import (
 	"time"
 
-	dbaasv1alpha1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/CrunchyData/crunchy-bridge-operator/apis/dbaas.redhat.com/v1alpha1"
+	dbaasv1beta1 "github.com/RHEcosystemAppEng/dbaas-operator/api/v1beta1"
 )
 
 var _ = Describe("CrunchyBridgeInstance controller ", func() {
@@ -57,8 +58,8 @@ var _ = Describe("CrunchyBridgeInstance controller ", func() {
 
 func createInstance(inventoryName string) *v1alpha1.CrunchyBridgeInstance {
 
-	DBaaSInstanceSpec := &dbaasv1alpha1.DBaaSInstanceSpec{
-		InventoryRef: dbaasv1alpha1.NamespacedName{
+	DBaaSInstanceSpec := &dbaasv1beta1.DBaaSInstanceSpec{
+		InventoryRef: dbaasv1beta1.NamespacedName{
 			Name:      inventoryName,
 			Namespace: testNamespace,
 		},
@@ -90,7 +91,7 @@ func updateMockInstanceStatus(instance *v1alpha1.CrunchyBridgeInstance) {
 	Expect(err).NotTo(HaveOccurred())
 
 	lastTransitionTime = lastTransitionTime.In(time.Local)
-	status := &dbaasv1alpha1.DBaaSInstanceStatus{
+	status := &dbaasv1beta1.DBaaSInstanceStatus{
 		InstanceID: "testInstanceID",
 		InstanceInfo: map[string]string{
 			"testInstanceInfo": "testInstanceInfo",
